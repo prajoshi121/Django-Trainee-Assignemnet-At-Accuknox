@@ -1,0 +1,27 @@
+By default, Django signals are executed synchronously. This means that when a signal is emitted, the connected signal handlers (receivers) are executed immediately and block the execution of the code until they complete.
+
+Here’s a code snippet to demonstrate this behavior:
+
+import time
+import django
+from django.dispatch import Signal, receiver
+from datetime import datetime
+
+# Custom signal
+my_signal = Signal()
+
+# Receiver function
+@receiver(my_signal)
+def my_signal_receiver(sender, **kwargs):
+    print("Signal received! Executing receiver...")
+    time.sleep(5)  # Simulate a time-consuming task
+    print("Receiver finished execution.")
+
+# Simulate sending the signal
+def trigger_signal():
+    print(f"Before signal sent: {datetime.now().strftime('%H:%M:%S')}")
+    my_signal.send(sender=None)  # Sending the signal
+    print(f"After signal sent: {datetime.now().strftime('%H:%M:%S')}")
+
+# Call the trigger function
+trigger_signal()
