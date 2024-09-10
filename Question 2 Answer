@@ -1,0 +1,25 @@
+Yes, by default, Django signals run in the same thread as the caller. To demonstrate this,
+we can create a Django signal and compare the thread in which the signal is sent and the thread in which the signal receiver runs.
+If the signal and the receiver run in the same thread, it will confirm that signals are executed in the same thread.
+
+import threading
+from django.dispatch import Signal, receiver
+from datetime import datetime
+
+# Custom signal
+my_signal = Signal()
+
+# Receiver function
+@receiver(my_signal)
+def my_signal_receiver(sender, **kwargs):
+    print(f"Receiver executed in thread: {threading.current_thread().name}")
+    print(f"Receiver timestamp: {datetime.now().strftime('%H:%M:%S')}")
+
+# Simulate sending the signal
+def trigger_signal():
+    print(f"Signal triggered in thread: {threading.current_thread().name}")
+    print(f"Signal timestamp: {datetime.now().strftime('%H:%M:%S')}")
+    my_signal.send(sender=None)
+
+# Call the trigger function
+trigger_signal()
